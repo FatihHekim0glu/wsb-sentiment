@@ -6,28 +6,48 @@ heavy / network / model dependency, and that the curated public API is present.
 
 from __future__ import annotations
 
+import subprocess
 import sys
 
 import pytest
 
+#: Heavy / network / model dependencies that must never be pulled in at import.
+_FORBIDDEN_MODULES = (
+    "praw",
+    "torch",
+    "transformers",
+    "tensorflow",
+    "vaderSentiment",
+    "textblob",
+    "plotly",
+    "typer",
+)
+
 
 @pytest.mark.unit
 def test_import_is_side_effect_free() -> None:
-    """Importing the package must not import praw/torch/transformers/network libs."""
-    import wsb_sentiment  # noqa: F401
+    """Importing the package must not import praw/torch/transformers/network libs.
 
-    forbidden = {
-        "praw",
-        "torch",
-        "transformers",
-        "tensorflow",
-        "vaderSentiment",
-        "textblob",
-        "plotly",
-        "typer",
-    }
-    leaked = forbidden.intersection(sys.modules)
-    assert not leaked, f"importing wsb_sentiment leaked heavy modules: {sorted(leaked)}"
+    Run in a FRESH interpreter via subprocess so the assertion reflects what
+    ``import wsb_sentiment`` actually pulls in, independent of any modules other
+    tests in this process may have imported (parity tests import VADER/TextBlob).
+    """
+    forbidden = ", ".join(repr(name) for name in _FORBIDDEN_MODULES)
+    program = (
+        "import sys\n"
+        "import wsb_sentiment  # noqa: F401\n"
+        f"forbidden = {{{forbidden}}}\n"
+        "leaked = sorted(forbidden.intersection(sys.modules))\n"
+        "assert not leaked, "
+        "f'importing wsb_sentiment leaked heavy modules: {leaked}'\n"
+    )
+    proc = subprocess.run(
+        [sys.executable, "-c", program],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert proc.returncode == 0, proc.stderr
 
 
 @pytest.mark.unit

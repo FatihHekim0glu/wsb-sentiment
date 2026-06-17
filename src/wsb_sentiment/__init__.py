@@ -40,6 +40,11 @@ from wsb_sentiment.backtest.engine import (
     attention_only_positions,
     run_signal_backtest,
 )
+from wsb_sentiment.backtest.runner import (
+    SentimentBacktestRun,
+    build_sentiment_figures,
+    run_sentiment_backtest,
+)
 from wsb_sentiment.backtest.stats import (
     annualized_vol,
     max_drawdown,
@@ -95,6 +100,7 @@ __all__ = [
     "InsufficientDataError",
     "MentionExtraction",
     "RunManifest",
+    "SentimentBacktestRun",
     "SignalBacktestResult",
     "SignalSpec",
     "SingularCovarianceError",
@@ -111,6 +117,7 @@ __all__ = [
     "annualized_vol",
     "attention_only_positions",
     "build_positions",
+    "build_sentiment_figures",
     "compute_honest_stats",
     "compute_returns",
     "config_hash",
@@ -133,6 +140,7 @@ __all__ = [
     "pit_universe",
     "probabilistic_sharpe_ratio",
     "rollup_daily_sentiment",
+    "run_sentiment_backtest",
     "run_signal_backtest",
     "score_textblob",
     "score_vader",

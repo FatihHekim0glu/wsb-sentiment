@@ -22,9 +22,44 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
+from wsb_sentiment._constants import EPS
+from wsb_sentiment._exceptions import InsufficientDataError, ValidationError
 from wsb_sentiment._typing import SentimentLike
+
+
+def _as_panel(sentiment: SentimentLike) -> pd.DataFrame:
+    """Coerce a sentiment input to a float64, datetime-indexed wide panel.
+
+    NaNs are preserved (allowed): the daily sentiment panel is legitimately sparse
+    on days with no mentions, and standardization/thresholding propagate NaN to a
+    flat (zero) position rather than failing.
+    """
+    if isinstance(sentiment, pd.DataFrame):
+        frame = sentiment.copy()
+    elif isinstance(sentiment, np.ndarray):
+        if sentiment.ndim != 2:
+            raise ValidationError(f"sentiment must be 2-dimensional, got ndim={sentiment.ndim}.")
+        frame = pd.DataFrame(sentiment)
+    else:
+        raise ValidationError("sentiment must be a DataFrame or 2-D ndarray.")
+
+    if frame.shape[0] == 0 or frame.shape[1] == 0:
+        raise ValidationError("sentiment must have at least one row and one column.")
+    return frame.astype("float64")
+
+
+def _smooth(frame: pd.DataFrame, window: int) -> pd.DataFrame:
+    """Apply a trailing (causal) rolling mean; ``window <= 1`` is a no-op.
+
+    ``min_periods=1`` keeps the leading rows informative instead of all-NaN, and
+    the rolling mean only ever looks BACKWARD, preserving the no-lookahead guard.
+    """
+    if window <= 1:
+        return frame
+    return frame.rolling(window=window, min_periods=1).mean()
 
 
 @dataclass(frozen=True, slots=True)
@@ -113,10 +148,36 @@ def fit_standardizer(
 
     Raises
     ------
-    NotImplementedError
-        This is a typed stub awaiting implementation.
+    ValidationError
+        If ``window`` is non-positive.
+    InsufficientDataError
+        If no rows fall on or before ``train_end``.
     """
-    raise NotImplementedError("fit_standardizer is not yet implemented")
+    if window < 1:
+        raise ValidationError(f"window must be >= 1, got {window}.")
+
+    frame = _as_panel(sentiment)
+    smoothed = _smooth(frame, window)
+
+    train = smoothed.loc[smoothed.index <= train_end]
+    if train.shape[0] == 0:
+        raise InsufficientDataError(
+            "fit_standardizer: no observations on or before train_end "
+            f"({train_end!r}); cannot fit the standardizer."
+        )
+
+    mean = train.mean(axis=0, skipna=True)
+    # Population-consistent std (ddof=0) floored at EPS so tickers with a constant
+    # or empty train slice standardize to zero rather than dividing by zero.
+    std = train.std(axis=0, ddof=0, skipna=True)
+    std = std.where(std > EPS, EPS).fillna(EPS)
+    mean = mean.fillna(0.0)
+
+    return StandardizerState(
+        mean=mean.astype("float64"),
+        std=std.astype("float64"),
+        n_train=int(train.shape[0]),
+    )
 
 
 def build_positions(
@@ -149,7 +210,38 @@ def build_positions(
 
     Raises
     ------
-    NotImplementedError
-        This is a typed stub awaiting implementation.
+    ValidationError
+        If ``spec.lag < 1``, ``spec.window < 1``, or ``spec.threshold < 0``.
     """
-    raise NotImplementedError("build_positions is not yet implemented")
+    if spec.lag < 1:
+        raise ValidationError(f"spec.lag must be >= 1 (no same-bar lookahead), got {spec.lag}.")
+    if spec.window < 1:
+        raise ValidationError(f"spec.window must be >= 1, got {spec.window}.")
+    if spec.threshold < 0.0:
+        raise ValidationError(f"spec.threshold must be >= 0, got {spec.threshold}.")
+
+    frame = _as_panel(sentiment)
+    smoothed = _smooth(frame, spec.window)
+
+    # Align the train-fit parameters to the panel's columns; unseen columns get a
+    # neutral (mean=0, std=EPS) mapping so they standardize to ~0 -> flat.
+    mean = state.mean.reindex(smoothed.columns).fillna(0.0)
+    std = state.std.reindex(smoothed.columns).fillna(EPS)
+    std = std.where(std > EPS, EPS)
+
+    # Standardize with TRAIN-ONLY parameters (never refit on the full/OOS panel).
+    z = (smoothed - mean) / std
+
+    # Threshold into raw long/short or long/flat positions. NaN sentiment (no
+    # mentions that day) yields a flat position.
+    above = z > spec.threshold
+    below = z < -spec.threshold
+    if spec.long_only:
+        positions = above.astype("float64")
+    else:
+        positions = above.astype("float64") - below.astype("float64")
+
+    # No-same-bar-lookahead: a position earned on day ``t`` was decided strictly
+    # before ``t``. The leading ``lag`` rows are held flat (no position).
+    shifted = positions.shift(spec.lag).fillna(0.0)
+    return shifted.astype("float64")

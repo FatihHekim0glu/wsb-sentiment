@@ -70,6 +70,46 @@ class VaderScore:
         return asdict(self)
 
 
+def _build_analyzer(finance_lexicon: dict[str, float] | None) -> Any:
+    """Construct a finance-augmented ``SentimentIntensityAnalyzer`` (LAZY import).
+
+    ``vaderSentiment`` is imported here, never at module import, so importing this
+    module touches no network/disk. The supplied (or default static) finance-slang
+    booster is merged into a FRESH analyzer's lexicon; nothing is fit or mutated
+    on the module-level constant.
+
+    Parameters
+    ----------
+    finance_lexicon:
+        Override of the static finance-slang booster table, or ``None`` to use
+        :data:`FINANCE_LEXICON`.
+
+    Returns
+    -------
+    SentimentIntensityAnalyzer
+        A fresh analyzer whose lexicon includes the finance boosters.
+    """
+    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+
+    analyzer = SentimentIntensityAnalyzer()
+    booster = FINANCE_LEXICON if finance_lexicon is None else finance_lexicon
+    # Augment a copy via ``update`` on the freshly-built analyzer's own lexicon;
+    # the module-level constant is never mutated.
+    analyzer.lexicon.update({word: float(value) for word, value in booster.items()})
+    return analyzer
+
+
+def _score_with(analyzer: Any, text: str) -> VaderScore:
+    """Score ``text`` with a prepared ``analyzer`` into a :class:`VaderScore`."""
+    scores = analyzer.polarity_scores(text)
+    return VaderScore(
+        compound=float(scores["compound"]),
+        positive=float(scores["pos"]),
+        neutral=float(scores["neu"]),
+        negative=float(scores["neg"]),
+    )
+
+
 def score_vader(
     text: str,
     *,
@@ -92,13 +132,9 @@ def score_vader(
     -------
     VaderScore
         The compound score plus positive/neutral/negative proportions.
-
-    Raises
-    ------
-    NotImplementedError
-        This is a typed stub awaiting implementation.
     """
-    raise NotImplementedError("score_vader is not yet implemented")
+    analyzer = _build_analyzer(finance_lexicon)
+    return _score_with(analyzer, text)
 
 
 def score_vader_batch(
@@ -122,10 +158,6 @@ def score_vader_batch(
     -------
     list[VaderScore]
         One score per input text, in order.
-
-    Raises
-    ------
-    NotImplementedError
-        This is a typed stub awaiting implementation.
     """
-    raise NotImplementedError("score_vader_batch is not yet implemented")
+    analyzer = _build_analyzer(finance_lexicon)
+    return [_score_with(analyzer, text) for text in texts]

@@ -42,6 +42,9 @@ class TextBlobScore:
 def score_textblob(text: str) -> TextBlobScore:
     """Score a single text with TextBlob (LAZY import).
 
+    ``textblob`` is imported here, never at module import, so importing this module
+    triggers no textblob import and no corpus download.
+
     Parameters
     ----------
     text:
@@ -51,17 +54,20 @@ def score_textblob(text: str) -> TextBlobScore:
     -------
     TextBlobScore
         The polarity/subjectivity pair.
-
-    Raises
-    ------
-    NotImplementedError
-        This is a typed stub awaiting implementation.
     """
-    raise NotImplementedError("score_textblob is not yet implemented")
+    from textblob import TextBlob
+
+    sentiment = TextBlob(text).sentiment
+    return TextBlobScore(
+        polarity=float(sentiment.polarity),
+        subjectivity=float(sentiment.subjectivity),
+    )
 
 
 def score_textblob_batch(texts: Iterable[str]) -> list[TextBlobScore]:
     """Score many texts with TextBlob, in order.
+
+    Imports ``textblob`` once (lazily) and scores every text with it.
 
     Parameters
     ----------
@@ -72,10 +78,16 @@ def score_textblob_batch(texts: Iterable[str]) -> list[TextBlobScore]:
     -------
     list[TextBlobScore]
         One score per input text, in order.
-
-    Raises
-    ------
-    NotImplementedError
-        This is a typed stub awaiting implementation.
     """
-    raise NotImplementedError("score_textblob_batch is not yet implemented")
+    from textblob import TextBlob
+
+    out: list[TextBlobScore] = []
+    for text in texts:
+        sentiment = TextBlob(text).sentiment
+        out.append(
+            TextBlobScore(
+                polarity=float(sentiment.polarity),
+                subjectivity=float(sentiment.subjectivity),
+            )
+        )
+    return out

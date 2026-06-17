@@ -34,6 +34,28 @@ uv pip install -e '.[data,viz,dev]'      # lean: NO transformers/torch/TF
 import wsb_sentiment   # import-pure: no praw / network / torch at import
 ```
 
+## Quickstart
+
+The single public entry point runs the whole leakage-guarded pipeline on the
+synthetic default (no keys, no live ingest, no VADER scoring at request time):
+
+```python
+from datetime import date
+from wsb_sentiment import run_sentiment_backtest, build_sentiment_figures
+
+run = run_sentiment_backtest(
+    start=date(2021, 1, 4), end=date(2022, 12, 30),
+    window=1, lag=1, threshold=0.0, cost_bps=10, seed=7,
+)
+print(run.summary["signal_has_edge"])     # -> False (the honest null)
+figures = build_sentiment_figures(run)     # {"equity_figure", "sentiment_figure"}
+```
+
+`run.summary` carries the metrics the backend response exposes: `net_sharpe`,
+`buyhold_sharpe`, `deflated_sharpe`, `psr`, `pbo`, `hac_tstat`, `hac_pvalue`,
+`turnover`, `n_effective_trials`, `signal_has_edge`, and `data_source`. The
+result is deterministic for a fixed `(tickers, start, end, seed)`.
+
 ## Design
 
 - **Lexicon sentiment only** — finance-augmented VADER (primary) with a TextBlob

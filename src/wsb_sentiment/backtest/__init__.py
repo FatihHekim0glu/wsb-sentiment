@@ -16,6 +16,11 @@ from wsb_sentiment.backtest.engine import (
     attention_only_positions,
     run_signal_backtest,
 )
+from wsb_sentiment.backtest.runner import (
+    SentimentBacktestRun,
+    build_sentiment_figures,
+    run_sentiment_backtest,
+)
 from wsb_sentiment.backtest.stats import (
     annualized_vol,
     max_drawdown,
@@ -30,10 +35,13 @@ from wsb_sentiment.backtest.walk_forward import (
 __all__ = [
     "BacktestResult",
     "FixedBpsCost",
+    "SentimentBacktestRun",
     "SignalBacktestResult",
     "annualized_vol",
     "attention_only_positions",
+    "build_sentiment_figures",
     "max_drawdown",
+    "run_sentiment_backtest",
     "run_signal_backtest",
     "sharpe_ratio",
     "turnover",

@@ -11,7 +11,9 @@ Importing this subpackage has no side effects (no network, no praw import).
 from __future__ import annotations
 
 from wsb_sentiment.ingest.extract import (
+    FINANCE_STOPLIST,
     MentionExtraction,
+    extract_mention_table,
     extract_mentions,
 )
 from wsb_sentiment.ingest.pushshift import (
@@ -25,10 +27,12 @@ from wsb_sentiment.ingest.reddit_api import (
 )
 
 __all__ = [
+    "FINANCE_STOPLIST",
     "MentionExtraction",
     "PushshiftQuery",
     "RawPost",
     "RedditCredentials",
+    "extract_mention_table",
     "extract_mentions",
     "fetch_pushshift_posts",
     "fetch_reddit_posts",

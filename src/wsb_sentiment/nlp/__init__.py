@@ -13,11 +13,13 @@ from __future__ import annotations
 from wsb_sentiment.nlp.textblob_parity import (
     TextBlobScore,
     score_textblob,
+    score_textblob_batch,
 )
 from wsb_sentiment.nlp.vader import (
     FINANCE_LEXICON,
     VaderScore,
     score_vader,
+    score_vader_batch,
 )
 
 __all__ = [
@@ -25,5 +27,7 @@ __all__ = [
     "TextBlobScore",
     "VaderScore",
     "score_textblob",
+    "score_textblob_batch",
     "score_vader",
+    "score_vader_batch",
 ]

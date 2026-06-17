@@ -30,12 +30,8 @@ def test_psr_in_unit_interval() -> None:
 @pytest.mark.unit
 def test_dsr_non_increasing_in_n_trials() -> None:
     """The Deflated Sharpe is non-increasing in the trial count (multiplicity)."""
-    few = deflated_sharpe_ratio(
-        0.15, n_obs=504, n_trials=1, variance_of_trial_sharpes=0.01
-    )
-    many = deflated_sharpe_ratio(
-        0.15, n_obs=504, n_trials=200, variance_of_trial_sharpes=0.01
-    )
+    few = deflated_sharpe_ratio(0.15, n_obs=504, n_trials=1, variance_of_trial_sharpes=0.01)
+    many = deflated_sharpe_ratio(0.15, n_obs=504, n_trials=200, variance_of_trial_sharpes=0.01)
     assert 0.0 <= many <= few <= 1.0
 
 
