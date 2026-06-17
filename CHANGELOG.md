@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `docs/DESIGN.md` — full architecture, post→verdict data flow, leakage invariants,
+  and testing strategy.
+- Architecture Decision Records under `docs/decisions/`: as-of cutoff at the prior
+  session close (0001), point-in-time universe with no future-constituent selection
+  (0002), train-only standardizer (0003), the mechanically-enforced honest weak null
+  (0004), and the synthetic default with no live ingestion at request time (0005).
+- `CITATION.cff` (Hutto–Gilbert VADER, Bailey–López de Prado DSR/PBO, DeMiguel et al.
+  OOS-decay, Newey–West HAC).
+
+### Changed
+
+- README: honest weak/negative headline with the actual synthetic metrics
+  (OOS net Sharpe 0.29, DSR 0.26, PBO 0.39, HAC p 0.79 → `signal_has_edge = False`),
+  an expanded Validation table (DSR/PSR 1e-10 parity; VADER–TextBlob sign-agreement
+  bands; oracle→test wording), a Reproduce block, ADR cross-links, and refreshed
+  status (compute core implemented; 290 tests, ≈93% coverage).
+
 ## [0.1.0] - 2026-06-17
 
 ### Added

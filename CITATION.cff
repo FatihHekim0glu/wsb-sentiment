@@ -1,0 +1,89 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "wsb-sentiment: A naive WSB sentiment signal, tested honestly out-of-sample"
+abstract: >-
+  A pure, typed Python library that turns r/wallstreetbets chatter into a daily
+  per-ticker, lexicon-based (finance-augmented VADER, with a TextBlob parity
+  cross-check) sentiment signal and tests honestly whether it predicts next-day
+  returns on a point-in-time S&P 500 universe. Leakage is guarded by an as-of
+  cutoff at the prior session close, a train-only standardizer, forward-return
+  labels, and walk-forward purge/embargo; significance is judged by the Deflated
+  and Probabilistic Sharpe Ratio (with a PCA-effective trial count over the swept
+  grid), the Probability of Backtest Overfitting via CSCV, and HAC (Newey-West)
+  t-stats. The headline is a credible weak/negative result: the mild in-sample
+  correlation is dominated by contemporaneous attention/return feedback and
+  largely decays out-of-sample, failing the Deflated Sharpe and per-side cost
+  hurdles. The shipped default runs on a synthetic sentiment + price generator so
+  the null is reproducible by construction.
+type: software
+version: 0.1.0
+date-released: "2026-06-17"
+license: MIT
+repository-code: "https://github.com/FatihHekim0glu/wsb-sentiment"
+url: "https://fatihhekimoglu.com"
+authors:
+  - family-names: "FatihHekim0glu"
+keywords:
+  - sentiment-analysis
+  - alternative-data
+  - natural-language-processing
+  - quantitative-finance
+  - deflated-sharpe-ratio
+  - backtest-overfitting
+references:
+  - type: article
+    title: "VADER: A Parsimonious Rule-Based Model for Sentiment Analysis of Social Media Text"
+    authors:
+      - family-names: "Hutto"
+        given-names: "Clayton"
+      - family-names: "Gilbert"
+        given-names: "Eric"
+    collection-title: "Proceedings of the International AAAI Conference on Web and Social Media"
+    year: 2014
+  - type: article
+    title: "The Deflated Sharpe Ratio: Correcting for Selection Bias, Backtest Overfitting, and Non-Normality"
+    authors:
+      - family-names: "Bailey"
+        given-names: "David H."
+      - family-names: "Lopez de Prado"
+        given-names: "Marcos"
+    journal: "The Journal of Portfolio Management"
+    year: 2014
+  - type: article
+    title: "The Probability of Backtest Overfitting"
+    authors:
+      - family-names: "Bailey"
+        given-names: "David H."
+      - family-names: "Borwein"
+        given-names: "Jonathan M."
+      - family-names: "Lopez de Prado"
+        given-names: "Marcos"
+      - family-names: "Zhu"
+        given-names: "Qiji Jim"
+    journal: "Journal of Computational Finance"
+    year: 2017
+  - type: article
+    title: "Optimal Versus Naive Diversification: How Inefficient Is the 1/N Portfolio Strategy?"
+    authors:
+      - family-names: "DeMiguel"
+        given-names: "Victor"
+      - family-names: "Garlappi"
+        given-names: "Lorenzo"
+      - family-names: "Uppal"
+        given-names: "Raman"
+    journal: "The Review of Financial Studies"
+    volume: 22
+    issue: 5
+    year: 2009
+  - type: article
+    title: "A Simple, Positive Semi-Definite, Heteroskedasticity and Autocorrelation Consistent Covariance Matrix"
+    authors:
+      - family-names: "Newey"
+        given-names: "Whitney K."
+      - family-names: "West"
+        given-names: "Kenneth D."
+    journal: "Econometrica"
+    volume: 55
+    issue: 3
+    year: 1987
+</content>
