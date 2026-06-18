@@ -2,19 +2,19 @@
 
 Turn r/wallstreetbets chatter into a daily per-ticker sentiment signal and
 **honestly** test whether it predicts next-day returns on a point-in-time
-S&P 500 universe — with the Deflated Sharpe Ratio, PBO/CSCV, and HAC.
+S&P 500 universe, using the Deflated Sharpe Ratio, PBO/CSCV, and HAC.
 
 > **Headline (honest weak/negative result).** A naive VADER WSB daily-sentiment
 > signal shows a *mild in-sample correlation* with next-day returns that is
 > dominated by contemporaneous attention/return feedback and **largely decays
 > out-of-sample**, failing the Deflated Sharpe and per-side cost hurdles. The
-> verdict reads **`signal_has_edge = False`** — a credible weak/negative result,
+> verdict reads **`signal_has_edge = False`**, a credible weak/negative result,
 > not a profitable edge. Mild in-sample correlation that decays out-of-sample
 > after costs is *attention feedback, not alpha*.
 
 The shipped default runs on a **synthetic** sentiment + price generator (no keys),
 constructed so the in-sample edge decays out-of-sample and fails the DSR after
-costs — the honest null by construction. The real-data path (Pushshift/PRAW +
+costs, the honest null by construction. The real-data path (Pushshift/PRAW +
 Polygon point-in-time prices) lives behind the offline `ingest`+`score` CLI.
 
 ## Result on the synthetic default
@@ -28,11 +28,11 @@ selects the *in-sample-best* config, then evaluates it **out-of-sample**:
 | --- | ---: | --- |
 | OOS net Sharpe (selected, after cost) | **0.29** | positive, but… |
 | Buy-and-hold Sharpe (same OOS window) | 0.94 | the signal underperforms simply holding |
-| **Deflated Sharpe Ratio** | **0.26** | « 0.95 — fails the multiplicity hurdle |
+| **Deflated Sharpe Ratio** | **0.26** | well below 0.95, fails the multiplicity hurdle |
 | Probabilistic Sharpe Ratio (PSR) | 0.61 | not credible at the full-grid trial count |
-| PBO (CSCV) | 0.39 | < 0.5 — passes the overfitting hurdle |
+| PBO (CSCV) | 0.39 | < 0.5, passes the overfitting hurdle |
 | HAC (Newey-West) t-stat | 0.26 | insignificant |
-| HAC p-value | 0.79 | » 0.05 — fails the significance hurdle |
+| HAC p-value | 0.79 | well above 0.05, fails the significance hurdle |
 | Turnover (avg per-day) | 0.27 | costs bite |
 | Effective trials (PCA of grid) | 10.0 | of 54 raw configs |
 | **`signal_has_edge`** | **`False`** | the honest null |
@@ -47,7 +47,7 @@ what survives is contemporaneous attention/return feedback, not forecasting powe
 The compute core is **implemented** end-to-end: import-pure typed `src/` package,
 finance-augmented VADER (+ TextBlob parity), as-of daily roll-up, train-only-scaler
 signal, purge/embargo walk-forward, DSR/PSR · PBO/CSCV · HAC · Memmel-JK, and the
-pure `signal_has_edge` verdict. Tests: **290 passed**, coverage **≈ 93 %**
+pure `signal_has_edge` verdict. Tests: **292 passed**, coverage **about 94%**
 (gate 85), `ruff` + `mypy --strict` clean.
 
 ## Install
@@ -113,23 +113,23 @@ above reproduce byte-identically for the same `(tickers, start, end, seed)`.
 
 ## Design
 
-- **Lexicon sentiment only** — finance-augmented VADER (primary) with a TextBlob
+- **Lexicon sentiment only.** Finance-augmented VADER (primary) with a TextBlob
   cross-check. No transformers/torch/TF; no model fit; no NLTK download at import.
-- **Offline ingestion** — Pushshift/PRAW adapters are batch tools behind the
+- **Offline ingestion.** Pushshift/PRAW adapters are batch tools behind the
   `[ingest]` extra; they are never called at request time.
-- **Leakage guards** — strict as-of cutoff at the prior session close
+- **Leakage guards.** A strict as-of cutoff at the prior session close
   ([ADR-0001](docs/decisions/0001-asof-cutoff-prior-close.md)), `signal.shift(1)`,
   forward-return labels only, `pct_change(fill_method=None)`, a **train-only**
   standardizer ([ADR-0003](docs/decisions/0003-train-only-scaler.md)),
   walk-forward purge + embargo, and a **point-in-time** S&P 500 universe (no
   future-constituent selection,
   [ADR-0002](docs/decisions/0002-pit-universe-no-future-constituent.md)).
-- **Honest stats** — Deflated/Probabilistic Sharpe with an *effective* trial count
+- **Honest stats.** Deflated/Probabilistic Sharpe with an *effective* trial count
   (PCA of the swept grid), PBO via CSCV, HAC (Newey-West) t-stats, and the
   Memmel-JK test versus buy-and-hold. The `signal_has_edge` verdict is a **pure
   function** of OOS net Sharpe + DSR + PBO + HAC
   ([ADR-0004](docs/decisions/0004-honest-weak-null.md)).
-- **Synthetic-by-default** — the deployed tool reads a precomputed/synthetic daily
+- **Synthetic-by-default.** The deployed tool reads a precomputed/synthetic daily
   sentiment table and runs only the lightweight backtest at request time
   ([ADR-0005](docs/decisions/0005-synthetic-default-no-live-ingest.md)).
 
@@ -140,52 +140,52 @@ invariants, and [`docs/decisions/`](docs/decisions/) for the contested choices.
 
 | Suite | What it pins | Tolerance / band |
 | --- | --- | --- |
-| **parity** — DSR/PSR | PSR-vs-zero, the DSR as PSR vs the expected-maximum benchmark, `n_trials=1` collapse, and the HAC t-stat helper, each re-derived from its closed form and checked against the reused `evaluation.dsr` | **1e-10** |
-| **parity** — VADER↔TextBlob | sign agreement on a labelled polar corpus (positive / negative); neutral text near zero; finance-lexicon boosters move bullish/bearish jargon in the correct sign; probabilities sum to 1 | **unanimous sign agreement** on the polar fixtures; neutral `\|compound\| ≈ 0` (abs 1e-9); `pos+neu+neg = 1` (abs 1e-6) |
-| **parity** — roll-up | the as-of daily aggregation matches a slow Python reference roll-up element-by-element | exact (slow oracle) |
+| **parity**, DSR/PSR | PSR-vs-zero, the DSR as PSR vs the expected-maximum benchmark, `n_trials=1` collapse, and the HAC t-stat helper, each re-derived from its closed form and checked against the reused `evaluation.dsr` | **1e-10** |
+| **parity**, VADER vs TextBlob | sign agreement on a labelled polar corpus (positive / negative); neutral text near zero; finance-lexicon boosters move bullish/bearish jargon in the correct sign; probabilities sum to 1 | **unanimous sign agreement** on the polar fixtures; neutral `\|compound\|` near 0 (abs 1e-9); `pos+neu+neg = 1` (abs 1e-6) |
+| **parity**, roll-up | the as-of daily aggregation matches a slow Python reference roll-up element-by-element | exact (slow oracle) |
 | **property** (Hypothesis) | as-of prefix-determinism / future-perturbation invariance of the aggregator; `signal.shift` equivariance; standardization scale-invariance; mention-count monotonicity | invariants hold for all generated inputs |
 | **regression** | golden decaying-signal backtest (in-sample edge → OOS decay → `signal_has_edge = False` after DSR/costs); the no-lookahead golden test; the import-purity subprocess test | locked metrics + `False` verdict |
 | **integration** | end-to-end score → aggregate → signal → backtest on synthetic data | runs green, deterministic |
 
 The DSR/PSR primitives are validated **oracle → test**: an independent closed-form
 oracle is derived in the test from the published formulae, then the library output
-is asserted equal to it to 1e-10 — so the reused `dsr.py` is pinned to the
+is asserted equal to it to 1e-10, so the reused `dsr.py` is pinned to the
 literature, not merely to itself.
 
 ## Limitations
 
-- **Pushshift deletion bias + coverage gap** — the Reddit/Pushshift historical
+- **Pushshift deletion bias + coverage gap.** The Reddit/Pushshift historical
   archive is missing removed/deleted posts and its coverage thins markedly after
   the 2023 API changes, biasing any reconstructed historical sentiment downward
   and non-randomly (survivorship in *posts*, not just tickers).
-- **PIT survivorship** — only symbols in the S&P 500 universe **as-of each date**
+- **PIT survivorship.** Only symbols in the S&P 500 universe **as-of each date**
   are tradable; meme tickers outside the as-of universe are **descriptive-only**
   and never traded. The tool reports their sentiment but does not take positions
   in them, precisely to avoid future-constituent / survivorship selection.
-- **Meme tickers are descriptive-only** — the most WSB-discussed names (e.g. GME,
+- **Meme tickers are descriptive-only.** The most WSB-discussed names (e.g. GME,
   AMC) are shown for context but are typically outside the PIT-tradable book; their
   chatter informs the figures, not the traded signal.
-- **Synthetic default** — the shipped tool runs on a synthetic generator so the
+- **Synthetic default.** The shipped tool runs on a synthetic generator so the
   result is reproducible and the null is honest; real data flows through the
   offline `ingest` + `score` path and a Polygon PIT-price provider, which are not
   exercised by the deployed request path.
 
 ## References
 
-- DeMiguel, Garlappi & Uppal (2009), *Optimal Versus Naive Diversification* —
+- DeMiguel, Garlappi & Uppal (2009), *Optimal Versus Naive Diversification*. The
   out-of-sample decay of estimated strategies versus a naive benchmark; the canonical
   OOS-decay precedent.
-- Bailey & López de Prado (2014), *The Deflated Sharpe Ratio* — DSR/PSR correcting
+- Bailey & López de Prado (2014), *The Deflated Sharpe Ratio*. DSR/PSR correcting
   for selection bias, multiplicity, and non-normality.
 - Bailey, Borwein, López de Prado & Zhu (2017), *The Probability of Backtest
-  Overfitting* — PBO via Combinatorially Symmetric Cross-Validation (CSCV).
+  Overfitting*. PBO via Combinatorially Symmetric Cross-Validation (CSCV).
 - Hutto & Gilbert (2014), *VADER: A Parsimonious Rule-Based Model for Sentiment
-  Analysis of Social Media Text* — the lexicon-based scorer used here.
-- Newey & West (1987); Andrews (1991) — heteroskedasticity- and
+  Analysis of Social Media Text*. The lexicon-based scorer used here.
+- Newey & West (1987); Andrews (1991). Heteroskedasticity- and
   autocorrelation-consistent (HAC) standard errors.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE).
 </content>
 </invoke>
