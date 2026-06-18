@@ -50,9 +50,8 @@ HAC significance, never narrated. Do not weaken the leakage guards (as-of cutoff
 ## Commit hygiene
 
 - Use clear, present-tense commit messages.
-- **Do not** add AI-attribution trailers, no `Co-Authored-By` machine trailers,
-  no "Generated with" lines, no robot-emoji attribution lines. The
-  `.github/workflows/no-ai-attribution.yml` guard fails any PR that contains them.
+- Keep commit trailers human. Do not add machine co-author or generated-with
+  trailers to commits or pull requests.
 
 ## Pull requests
 
