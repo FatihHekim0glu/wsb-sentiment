@@ -14,7 +14,7 @@ honest. For *why* individual contested choices were made, see the numbered ADRs 
   can be audited line by line and vendored into a backend without dragging UI,
   network, praw, or model dependencies along.
 - A faithful lexicon sentiment pipeline (finance-augmented VADER, primary; TextBlob
-  as a parity cross-check) — no transformers/torch/TF, no model fit, no NLTK
+  as a parity cross-check), no transformers/torch/TF, no model fit, no NLTK
   download at import.
 - A statistically defensible verdict that survives multiplicity correction and is
   *mechanically* prevented from over-claiming.
@@ -72,12 +72,12 @@ typer) are imported lazily inside the functions that use them.
 
 ### Foundation (`_*.py`)
 
-- `_constants.py` — `TRADING_DAYS` / `PERIODS_PER_YEAR` / `EPS`; one source of truth.
-- `_validation.py` — input guards (shape, finiteness, sufficient observations,
+- `_constants.py`, `TRADING_DAYS` / `PERIODS_PER_YEAR` / `EPS`; one source of truth.
+- `_validation.py`, input guards (shape, finiteness, sufficient observations,
   inner alignment).
-- `_typing.py` / `_exceptions.py` — shared aliases and the `WsbSentimentError`
+- `_typing.py` / `_exceptions.py`, shared aliases and the `WsbSentimentError`
   exception taxonomy (every vendored primitive is re-homed onto this base).
-- `_manifest.py` / `_rng.py` — `RunManifest` (BLAKE2b config hash) plus seeded
+- `_manifest.py` / `_rng.py`, `RunManifest` (BLAKE2b config hash) plus seeded
   PCG64 substreams. The same seed yields byte-identical sentiment, prices, metrics,
   and verdict.
 
@@ -92,8 +92,8 @@ cross-check). Both score per post and are deterministic.
 
 ### `aggregate/rollup.py`
 
-Aggregates scored mentions to a per-(ticker, day) panel — mean/median compound,
-mention count, positive-share — under a **strict as-of cutoff at the prior session
+Aggregates scored mentions to a per-(ticker, day) panel, mean/median compound,
+mention count, positive-share, under a **strict as-of cutoff at the prior session
 close** ([ADR-0001](decisions/0001-asof-cutoff-prior-close.md)). A post created
 after a session's close rolls into the *next* session's signal, so a day's signal
 can only ever be informed by information available before that day's open.
@@ -118,7 +118,7 @@ the single public entry point.
 ### `evaluation/`
 
 `dsr.py` computes the Deflated/Probabilistic Sharpe with the full-grid effective
-`n_trials`. `stats.py` assembles the `HonestStats` bundle — DSR/PSR with a
+`n_trials`. `stats.py` assembles the `HonestStats` bundle, DSR/PSR with a
 **PCA-of-trial-returns effective trial count** over the swept grid, PBO via CSCV
 (`pbo.py` / `cpcv.py`), HAC (Newey-West) t-stats (`hac.py`, Andrews bandwidth), the
 Memmel-JK test versus buy-and-hold (`memmel.py`), and stationary-bootstrap CIs
@@ -163,7 +163,7 @@ The compute core guarantees, and tests enforce:
    appending future posts leaves every already-emitted daily aggregate unchanged.
 3. **No-lookahead.** Standardizer mean/std are fit on the TRAIN slice only;
    perturbing OOS data does not change them. Positions are `signal.shift(lag)`-ed
-   and labels are forward returns only — never same-bar.
+   and labels are forward returns only, never same-bar.
 4. **Standardization scale-invariance.** A positive affine rescale of the raw
    sentiment leaves the standardized signal (hence the positions) unchanged.
 5. **Mention-count monotonicity.** The attention-only baseline is monotone in the
@@ -174,7 +174,7 @@ The compute core guarantees, and tests enforce:
 7. **DSR multiplicity.** The Deflated Sharpe is deflated by the PCA-effective trial
    count over the full swept grid; it is non-increasing in `n_trials`.
 8. **Verdict safety.** `signal_has_edge` cannot read `True` unless OOS net Sharpe
-   > 0 AND DSR > threshold AND PBO < threshold AND HAC p < α — all at once
+   > 0 AND DSR > threshold AND PBO < threshold AND HAC p < α, all at once
    (truth-table unit-tested, [ADR-0004](decisions/0004-honest-weak-null.md)).
 9. **Determinism.** Same `(tickers, start, end, seed)` → byte-identical outputs.
 10. **Import purity.** Importing any `src/wsb_sentiment` module triggers no I/O, no
@@ -184,18 +184,18 @@ The compute core guarantees, and tests enforce:
 
 Tests are partitioned by intent under `tests/` (markers in `pyproject.toml`):
 
-- **`unit/`** — isolated kernels: the verdict truth table, the standardizer, the
+- **`unit/`**, isolated kernels: the verdict truth table, the standardizer, the
   CLI surface, individual evaluation primitives.
-- **`property/`** (Hypothesis) — the invariants above: as-of prefix-determinism,
+- **`property/`** (Hypothesis), the invariants above: as-of prefix-determinism,
   shift-equivariance, standardization scale-invariance, mention-count monotonicity.
-- **`parity/`** — golden checks against independent references: VADER↔TextBlob sign
+- **`parity/`**, golden checks against independent references: VADER↔TextBlob sign
   agreement on a labelled polar corpus; the daily roll-up vs a slow Python reference;
   DSR/PSR and the HAC t-stat helper vs independently re-derived closed forms to
   **1e-10**.
-- **`regression/`** — the honest null, locked: the decaying-signal golden backtest
+- **`regression/`**, the honest null, locked: the decaying-signal golden backtest
   (in-sample edge → OOS decay → `signal_has_edge = False` after DSR/costs), the
   no-lookahead golden test, and the import-purity subprocess test.
-- **`integration/`** — end-to-end score → aggregate → signal → backtest on the
+- **`integration/`**, end-to-end score → aggregate → signal → backtest on the
   synthetic panel.
 
 Seeded fixtures in `conftest.py` (`synthetic_sentiment_panel`, `decaying_signal`,
@@ -204,13 +204,13 @@ Seeded fixtures in `conftest.py` (`synthetic_sentiment_panel`, `decaying_signal`
 ## Backend & frontend boundary
 
 The compute core is decoupled from delivery. The backend vendors
-`wsb-sentiment[data]` (lean — **no** torch/transformers) under
+`wsb-sentiment[data]` (lean, **no** torch/transformers) under
 `api/lib/wsb_sentiment/` and exposes `POST /tools/wsb-sentiment-signal/run`,
 returning summary scalars plus Plotly `{data, layout}` figures (the OOS equity curve
 signal-vs-buy-hold and the daily sentiment + mention-count chart). The deployed path
-**reads a precomputed/synthetic daily sentiment table** — no live Pushshift/PRAW and
+**reads a precomputed/synthetic daily sentiment table**, no live Pushshift/PRAW and
 no VADER scoring at request time ([ADR-0005](decisions/0005-synthetic-default-no-live-ingest.md)).
 The frontend renders the figures and surfaces the pure-derived `signal_has_edge` as a
 prominent **"Signal has edge: NO"** badge, with the honest caption "mild in-sample
-correlation that decays out-of-sample after costs — attention feedback, not alpha".
+correlation that decays out-of-sample after costs, attention feedback, not alpha".
 </content>

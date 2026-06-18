@@ -16,13 +16,12 @@ permissions:
 
 jobs:
   test:
-    name: test (py${{ matrix.python-version }})
+    name: Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,14 +32,21 @@ jobs:
           python-version: ${{ matrix.python-version }}
           enable-cache: true
 
-      - name: Install project (lean extras + dev; NO transformers/torch)
-        run: uv pip install --system -e '.[data,viz,ingest,dev]'
+      - name: Sync dependencies
+        run: uv sync --all-extras --python ${{ matrix.python-version }}
 
-      - name: Lint (ruff)
-        run: uv run --no-project ruff check src
+      - name: Lint with ruff
+        run: uv run ruff check src tests
 
-      - name: Type-check (mypy, strict)
-        run: uv run --no-project mypy src
+      - name: Type-check with mypy
+        run: uv run mypy src
 
-      - name: Test (pytest + coverage gate)
-        run: uv run --no-project pytest -q --cov=wsb_sentiment --cov-report=term --cov-fail-under=85
+      - name: Run tests with coverage
+        run: uv run pytest -m "not slow" --cov=wsb_sentiment --cov-report=xml --cov-report=term --cov-fail-under=85
+
+      - name: Upload coverage to Codecov
+        if: matrix.python-version == '3.12'
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.xml
+          fail_ci_if_error: false

@@ -161,7 +161,7 @@ def test_compute_returns_is_forward_safe() -> None:
 
 @pytest.mark.unit
 def test_compute_returns_does_not_forward_fill_across_gaps() -> None:
-    """A NaN price gap stays a NaN return — it is NOT manufactured into a 0."""
+    """A NaN price gap stays a NaN return - it is NOT manufactured into a 0."""
     prices = pd.DataFrame(
         {"X": [100.0, np.nan, 110.0], "Y": [50.0, 55.0, 60.5]},
         index=pd.date_range("2022-01-03", periods=3, freq="B"),

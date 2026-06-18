@@ -44,15 +44,14 @@ The headline is a credible WEAK/NEGATIVE result: the naive VADER WSB sentiment
 signal's mild in-sample correlation with next-day returns largely decays
 out-of-sample and fails the Deflated Sharpe and per-side cost hurdles. The
 `signal_has_edge` verdict is a PURE function of the OOS net Sharpe, DSR, PBO, and
-HAC significance — never narrated. Do not weaken the leakage guards (as-of cutoff,
+HAC significance, never narrated. Do not weaken the leakage guards (as-of cutoff,
 `signal.shift`, train-only scaler, PIT universe) or overclaim profit.
 
 ## Commit hygiene
 
 - Use clear, present-tense commit messages.
-- **Do not** add AI-attribution trailers — no `Co-Authored-By: Claude`,
-  no "Generated with Claude", no robot-emoji attribution lines. The
-  `.github/workflows/no-ai-attribution.yml` guard fails any PR that contains them.
+- Keep commit trailers human. Do not add machine co-author or generated-with
+  trailers to commits or pull requests.
 
 ## Pull requests
 

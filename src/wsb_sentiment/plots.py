@@ -1,8 +1,8 @@
 """Plotly figure builders (LAZY plotly).
 
-Each builder returns a plain ``dict`` shaped ``{"data": [...], "layout": {...}}`` —
+Each builder returns a plain ``dict`` shaped ``{"data": [...], "layout": {...}}`` -
 the same JSON shape the FastAPI layer serializes and the Next.js ``PlotlyChart``
-component renders — so no Plotly object leaks across the API boundary. Plotly is
+component renders - so no Plotly object leaks across the API boundary. Plotly is
 an OPTIONAL dependency (the ``viz`` extra) imported LAZILY inside each builder;
 importing this module has no side effects and does not require Plotly.
 
@@ -120,7 +120,7 @@ def _aggregate_series(panel: pd.DataFrame, ticker: str | None, *, how: str) -> p
     """Reduce a wide ``day x ticker`` panel to one daily series.
 
     When ``ticker`` is given, the single column is returned; otherwise the panel is
-    aggregated across tickers — by ``mean`` (sentiment) or ``sum`` (mention count).
+    aggregated across tickers - by ``mean`` (sentiment) or ``sum`` (mention count).
     """
     if ticker is not None:
         if ticker not in panel.columns:
@@ -191,7 +191,7 @@ def sentiment_figure(
             "line": {"color": "#16a34a", "width": 2},
         },
     ]
-    suffix = f" — {ticker}" if ticker is not None else " — aggregate"
+    suffix = f" - {ticker}" if ticker is not None else " - aggregate"
     layout = {
         "title": {"text": title + suffix},
         "xaxis": {"title": {"text": "Date"}},

@@ -1,6 +1,6 @@
 """Lexicon-based sentiment scoring (finance-augmented VADER, with TextBlob parity).
 
-Both scorers are LEXICON-BASED — there is NO model fit, NO transformers/torch/TF,
+Both scorers are LEXICON-BASED - there is NO model fit, NO transformers/torch/TF,
 and NO NLTK download at import. The VADER analyzer is the primary scorer; TextBlob
 provides an independent cross-check used by the parity test suite. Scoring happens
 in the OFFLINE ``score`` CLI path on the ingested text, never at request time.

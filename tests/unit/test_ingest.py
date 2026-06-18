@@ -272,7 +272,7 @@ def test_ingest_import_is_side_effect_free() -> None:
 
 
 # --------------------------------------------------------------------------- #
-# pushshift adapter (stubbed getter — no network)                            #
+# pushshift adapter (stubbed getter - no network)                            #
 # --------------------------------------------------------------------------- #
 def _record(rid: str, created: int, *, title: str = "GME", selftext: str = "") -> dict[str, Any]:
     return {
@@ -450,7 +450,7 @@ def test_pushshift_query_to_dict() -> None:
 
 
 # --------------------------------------------------------------------------- #
-# reddit_api adapter (stubbed lazy praw — no network)                        #
+# reddit_api adapter (stubbed lazy praw - no network)                        #
 # --------------------------------------------------------------------------- #
 class _FakeSubmission:
     def __init__(self, sid: str, created: float, title: str = "GME") -> None:

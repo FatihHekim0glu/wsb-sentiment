@@ -5,7 +5,7 @@ responsible for:
 
 - **As-of cutoff** (:func:`wsb_sentiment.aggregate.rollup.rollup_daily_sentiment`):
   a post created at time ``u`` may inform trading day ``d`` only if ``u`` is on or
-  before the PRIOR session close of ``d`` — so no post created after a session's
+  before the PRIOR session close of ``d`` - so no post created after a session's
   close can leak into that same session, and the aggregator is prefix-deterministic
   (appending future posts never changes an already-emitted ``(ticker, day)`` row).
 - **Train-only scaler + shift** (:mod:`wsb_sentiment.signal.build`): the

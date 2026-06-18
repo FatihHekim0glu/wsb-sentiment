@@ -1,7 +1,7 @@
 """Unit tests for the reused honest-stats primitives and the verdict truth table.
 
-These exercise the *copied* (already-implemented) infra — DSR/PSR, the verdict
-purity rule, and the seeded fixtures — so the suite has real green coverage even
+These exercise the *copied* (already-implemented) infra - DSR/PSR, the verdict
+purity rule, and the seeded fixtures - so the suite has real green coverage even
 while the new compute kernels remain stubs.
 """
 

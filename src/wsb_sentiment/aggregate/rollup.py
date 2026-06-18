@@ -259,7 +259,7 @@ def _assign_sessions(
     first session close at or after ``u`` (``searchsorted`` with ``side='left'``)
     and roll that session forward by one: a post landing in session ``k``'s window
     (``close(k-1) < u <= close(k)``) may only act on session ``k`` itself, whose
-    prior close is ``close(k-1)`` — but a post must clear the PRIOR close, so a
+    prior close is ``close(k-1)`` - but a post must clear the PRIOR close, so a
     post with ``u <= close(k)`` first informs the session AFTER ``k``.
     """
     # Both sides are naive-UTC datetime64 so the comparison is well-defined.

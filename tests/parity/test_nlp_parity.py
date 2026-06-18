@@ -8,7 +8,7 @@ the behaviour of the finance-slang augmentation:
   direction (and an empty booster reproduces stock VADER);
 - both scorers are deterministic and side-effect free.
 
-No model is fit and no network/NLTK download happens — importing the modules under
+No model is fit and no network/NLTK download happens - importing the modules under
 test has no side effects.
 """
 
@@ -32,13 +32,13 @@ from wsb_sentiment.nlp import (
 POSITIVE_TEXTS: tuple[str, ...] = (
     "This is absolutely great and wonderful news!",
     "I love this, it is fantastic and amazing.",
-    "What a brilliant, excellent outcome — so happy.",
+    "What a brilliant, excellent outcome - so happy.",
     "Superb results, truly the best day.",
 )
 NEGATIVE_TEXTS: tuple[str, ...] = (
     "This is absolutely terrible and awful news.",
     "I hate this, it is horrible and disgusting.",
-    "What a dreadful, miserable outcome — so sad.",
+    "What a dreadful, miserable outcome - so sad.",
     "Catastrophic results, truly the worst day.",
 )
 NEUTRAL_TEXTS: tuple[str, ...] = (
@@ -135,8 +135,8 @@ def test_every_finance_word_scores_in_its_sign() -> None:
 
     Most finance-slang words are absent from stock VADER, so the booster is what
     gives them valence; a few (e.g. ``diamond``, ``dump``) already exist in the
-    base lexicon with the same sign, so we assert SIGN correctness — the contract
-    that matters for the rollup — rather than a strict shift versus base.
+    base lexicon with the same sign, so we assert SIGN correctness - the contract
+    that matters for the rollup - rather than a strict shift versus base.
     """
     for word, valence in FINANCE_LEXICON.items():
         augmented = score_vader(word, finance_lexicon={word: valence})

@@ -8,7 +8,7 @@ Plotly figure dicts the response carries.
 Pipeline (every leakage guard delegated to the owning library function):
 
 1. load the daily sentiment + price panel (synthetic default; cache when present)
-   via :func:`wsb_sentiment.data.load_sentiment_panel` — NO live Pushshift/PRAW
+   via :func:`wsb_sentiment.data.load_sentiment_panel` - NO live Pushshift/PRAW
    ingestion or VADER scoring happens here;
 2. compute FORWARD-safe returns (``pct_change(fill_method=None)``);
 3. anchored train/test split at the sample midpoint;
@@ -23,7 +23,7 @@ Pipeline (every leakage guard delegated to the owning library function):
 
 By construction on the synthetic default the in-sample edge DECAYS out-of-sample
 and FAILS the DSR + per-side cost hurdles, so the headline ``signal_has_edge``
-reads ``False`` — the honest null.
+reads ``False`` - the honest null.
 
 Importing this module has no side effects.
 """
@@ -132,7 +132,7 @@ def run_sentiment_backtest(
     """Run the full honest sentiment-signal backtest and return the summary bundle.
 
     This is the single public entry point the backend router calls. It loads the
-    daily sentiment + price panel (synthetic default — no live ingest, no VADER
+    daily sentiment + price panel (synthetic default - no live ingest, no VADER
     scoring at request time), sweeps the ``window x lag x threshold x cost`` grid
     with strict no-lookahead guards, selects the in-sample-best config, evaluates
     it out-of-sample, and derives the pure ``signal_has_edge`` verdict.
@@ -346,7 +346,7 @@ def build_sentiment_figures(
 
     Builds the out-of-sample equity-curve figure (net signal vs buy-and-hold) and
     the daily-sentiment + mention-count figure from a completed
-    :class:`SentimentBacktestRun`. Plotly itself is never required — the figure
+    :class:`SentimentBacktestRun`. Plotly itself is never required - the figure
     builders return plain ``{"data", "layout"}`` mappings.
 
     Parameters

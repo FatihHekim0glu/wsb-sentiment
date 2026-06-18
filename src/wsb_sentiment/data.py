@@ -1,7 +1,7 @@
 """Synthetic sentiment + price generator and data loaders.
 
-The shipped DEFAULT (tests and the deployed tool) runs on a SYNTHETIC generator —
-no Reddit/Pushshift/Polygon keys required — constructed so the in-sample
+The shipped DEFAULT (tests and the deployed tool) runs on a SYNTHETIC generator,
+no Reddit/Pushshift/Polygon keys required, constructed so the in-sample
 sentiment-return correlation DECAYS out-of-sample and FAILS the Deflated Sharpe
 after costs. That is the honest null BY CONSTRUCTION: there is a mild early
 relationship dominated by contemporaneous attention/return feedback that does not
@@ -150,8 +150,10 @@ def generate_synthetic_panel(
     there. A separate CONTEMPORANEOUS attention/return feedback term confounds the
     relationship: it inflates the same-bar (untradable) correlation without adding
     any predictive power. The result: a clear in-sample LAGGED correlation that
-    largely vanishes out-of-sample — failing the Deflated Sharpe after costs, the
-    honest null by construction. The decay is robust across seeds (property-tested).
+    largely vanishes out-of-sample, failing the Deflated Sharpe after costs, the
+    honest null by construction. The decay holds on average and for the large
+    majority of seeds (property-tested); on a finite noisy panel an individual seed
+    can show a slightly larger out-of-sample correlation by chance.
 
     Parameters
     ----------
@@ -238,7 +240,7 @@ def generate_synthetic_panel(
     # there, so PREDICTIVE power is exhausted by the train/test boundary and any
     # tradable relationship vanishes out-of-sample. A separate contemporaneous
     # attention/return feedback term (sentiment co-moves with the SAME-bar return)
-    # inflates the in-sample same-bar correlation without being tradable — the
+    # inflates the in-sample same-bar correlation without being tradable, the
     # honest-null confound.
     t_frac = np.arange(n_obs, dtype="float64") / float(max(n_obs - 1, 1))
     ramp = np.clip(t_frac / decay_at, 0.0, 1.0)
@@ -413,7 +415,7 @@ def compute_returns(prices: PricesLike) -> pd.DataFrame:
     r"""Convert a price panel to forward-safe simple returns.
 
     NO-LOOKAHEAD REQUIREMENT: returns are computed with
-    ``prices.pct_change(fill_method=None)`` — prices are NEVER forward-filled
+    ``prices.pct_change(fill_method=None)``: prices are NEVER forward-filled
     before differencing, because ffill-then-diff manufactures spurious zero returns
     across gaps and leaks information. The leading all-NaN row is dropped.
 
