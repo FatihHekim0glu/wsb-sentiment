@@ -24,7 +24,7 @@ hit Reddit live. Doing so at request time is the wrong design on every axis:
   post-2023 coverage gap.
 
 We want a default that is reproducible, fast, key-free, and that *builds the honest
-null in by construction* — while still keeping the real-data path available and
+null in by construction*, while still keeping the real-data path available and
 tested.
 
 ## Decision
@@ -35,11 +35,11 @@ deployed request path performs **no live ingestion and no VADER scoring**:
 - `data.py` generates, from a seeded PCG64 stream, a per-(ticker, day) sentiment
   panel (mean compound, mention count, positive-share) plus a correlated-ish price
   panel and a PIT universe mask, constructed so the in-sample sentiment→return
-  correlation **decays out-of-sample and fails the DSR after costs** — the honest
+  correlation **decays out-of-sample and fails the DSR after costs**, the honest
   null by construction.
 - `run_sentiment_backtest(..., data_source_pref="synthetic")` (the deployed default)
-  reads this synthetic table — or a precomputed cached parquet when present
-  (`data_source ∈ {synthetic, cache, polygon}`) — and runs **only the lightweight
+  reads this synthetic table, or a precomputed cached parquet when present
+  (`data_source ∈ {synthetic, cache, polygon}`), and runs **only the lightweight
   backtest** at request time.
 - VADER/TextBlob scoring and the Pushshift/PRAW adapters live in the library
   (`nlp/`, `ingest/`), tested on synthetic text fixtures, and are exercised only by
@@ -55,7 +55,7 @@ deployed request path performs **no live ingestion and no VADER scoring**:
   time because there is nothing to score.
 - **Positive.** The real-data capability is preserved and unit-tested; switching to
   cached/Polygon data is a `data_source` change, not a rewrite.
-- **Cost.** The deployed default does not reflect *live* Reddit sentiment — it is a
+- **Cost.** The deployed default does not reflect *live* Reddit sentiment, it is a
   faithful synthetic null, clearly labelled as such in the README and the frontend
   `data_source` badge. Real conclusions require running the offline ingest path on
   actual (deletion-biased, coverage-gapped) Pushshift data.

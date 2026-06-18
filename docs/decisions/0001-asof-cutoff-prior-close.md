@@ -15,7 +15,7 @@ day's full-day sentiment to predict that **same** day's return. That is
 look-ahead: a post made at 15:55, or worse at 21:00 after the close, would be
 folded into a "signal" credited with predicting a move that already happened (or
 that the post is reacting to). Sentiment and contemporaneous returns are
-mechanically entangled on r/wallstreetbets — attention spikes *after* a move —
+mechanically entangled on r/wallstreetbets, attention spikes *after* a move,
 so any same-bar leakage manufactures a spurious edge.
 
 This is the single largest correctness risk in the whole pipeline. It must be
@@ -41,8 +41,8 @@ signal is allowed to trade.
 
 ## Consequences
 
-- **Positive.** Same-bar contamination — the dominant source of a fake
-  sentiment→return correlation — is structurally impossible. The mild in-sample
+- **Positive.** Same-bar contamination, the dominant source of a fake
+  sentiment→return correlation, is structurally impossible. The mild in-sample
   correlation that survives is honest, and it is exactly what decays out-of-sample.
 - **Positive.** The guard is testable as an *invariant*: appending or perturbing
   future posts leaves every already-emitted daily aggregate unchanged

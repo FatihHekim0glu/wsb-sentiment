@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "wsb-sentiment"
 version = "0.1.0"
-description = "A naive VADER r/wallstreetbets daily-sentiment signal, honestly backtested against next-day returns on a point-in-time S&P 500 universe — the mild in-sample edge largely decays out-of-sample after costs (Deflated Sharpe, PBO/CSCV, HAC)."
+description = "A naive VADER r/wallstreetbets daily-sentiment signal, honestly backtested against next-day returns on a point-in-time S&P 500 universe; the mild in-sample edge largely decays out-of-sample after costs (Deflated Sharpe, PBO/CSCV, HAC)."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
@@ -65,7 +65,12 @@ viz = [
     "plotly>=5.20",
     "kaleido>=0.2.1",
 ]
-# Developer + parity-oracle + lint/type/test stack.
+# Typer console-script entry point. Imported lazily, never at package import time.
+cli = [
+    "typer>=0.12",
+]
+# Developer + parity-oracle + lint/type/test stack. Pulls in the cli extra so the
+# Typer command smoke tests run rather than skip.
 dev = [
     "pytest>=8.0",
     "pytest-cov>=5.0",
@@ -73,6 +78,7 @@ dev = [
     "ruff>=0.5",
     "mypy>=1.10",
     "pandas-stubs>=2.0",
+    "typer>=0.12",
 ]
 
 [project.scripts]
@@ -180,6 +186,13 @@ markers = [
 [tool.coverage.run]
 branch = true
 source = ["wsb_sentiment"]
+# Exclude the thin CLI adapter and the Plotly figure builders from the core gate:
+# both are I/O / presentation glue exercised by smoke tests, not the numerical
+# core the coverage bar is meant to protect.
+omit = [
+    "*/wsb_sentiment/cli.py",
+    "*/wsb_sentiment/plots.py",
+]
 
 [tool.coverage.report]
 fail_under = 85

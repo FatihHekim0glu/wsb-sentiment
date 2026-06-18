@@ -9,22 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `docs/DESIGN.md` — full architecture, post→verdict data flow, leakage invariants,
-  and testing strategy.
+- `docs/DESIGN.md`: full architecture, post-to-verdict data flow, leakage
+  invariants, and testing strategy.
 - Architecture Decision Records under `docs/decisions/`: as-of cutoff at the prior
   session close (0001), point-in-time universe with no future-constituent selection
   (0002), train-only standardizer (0003), the mechanically-enforced honest weak null
   (0004), and the synthetic default with no live ingestion at request time (0005).
-- `CITATION.cff` (Hutto–Gilbert VADER, Bailey–López de Prado DSR/PBO, DeMiguel et al.
-  OOS-decay, Newey–West HAC).
+- `CITATION.cff` (Hutto and Gilbert VADER, Bailey and López de Prado DSR/PBO,
+  DeMiguel et al. OOS-decay, Newey and West HAC).
+- `cli` optional extra declaring the Typer dependency the console script needs at
+  runtime, also pulled into `dev` so the Typer command smoke tests run.
 
 ### Changed
 
 - README: honest weak/negative headline with the actual synthetic metrics
-  (OOS net Sharpe 0.29, DSR 0.26, PBO 0.39, HAC p 0.79 → `signal_has_edge = False`),
-  an expanded Validation table (DSR/PSR 1e-10 parity; VADER–TextBlob sign-agreement
-  bands; oracle→test wording), a Reproduce block, ADR cross-links, and refreshed
-  status (compute core implemented; 290 tests, ≈93% coverage).
+  (OOS net Sharpe 0.29, DSR 0.26, PBO 0.39, HAC p 0.79, `signal_has_edge = False`),
+  an expanded Validation table (DSR/PSR 1e-10 parity; VADER vs TextBlob
+  sign-agreement bands; oracle-to-test wording), a Reproduce block, ADR cross-links,
+  and refreshed status (compute core implemented; 292 tests, about 94% coverage).
+- Property test `test_edge_decays_for_every_seed` replaced by the statistically
+  honest `test_edge_decays_on_average` plus a strict per-seed positive in-sample
+  check: the out-of-sample decay holds on average and for the large majority of
+  seeds rather than strictly for every seed (a noisy single seed can show a
+  slightly larger out-of-sample correlation by chance).
 
 ## [0.1.0] - 2026-06-17
 

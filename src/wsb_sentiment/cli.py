@@ -3,10 +3,10 @@
 A thin orchestration layer over the compute library exposing the OFFLINE
 ``ingest`` / ``score`` path and the ``backtest`` path:
 
-- ``ingest`` — pull raw WSB posts (Pushshift/PRAW) into a local table (offline);
-- ``score`` — VADER(+TextBlob parity) score the ingested text and roll up to a
+- ``ingest``: pull raw WSB posts (Pushshift/PRAW) into a local table (offline);
+- ``score``: VADER(+TextBlob parity) score the ingested text and roll up to a
   daily per-ticker sentiment panel (offline);
-- ``backtest`` — run the leakage-guarded sentiment-signal backtest and print the
+- ``backtest``: run the leakage-guarded sentiment-signal backtest and print the
   honest summary + verdict (defaults to the synthetic generator).
 
 Constructing the app object is deferred to :func:`build_app` so importing this
@@ -144,7 +144,7 @@ def run_backtest(
         net_sharpe = sharpe_ratio(result.net_returns.to_numpy())
         buyhold_sharpe = sharpe_ratio(result.buyhold_returns.to_numpy())
 
-        print("WSB sentiment signal — honest backtest")
+        print("WSB sentiment signal, honest backtest")
         print("=" * 44)
         print(f"data source        : {data_source}")
         print(f"tickers            : {', '.join(tickers)}")
@@ -327,7 +327,7 @@ def build_app() -> typer.Typer:
         no_args_is_help=True,
     )
 
-    @cli.command("backtest")  # type: ignore[untyped-decorator]
+    @cli.command("backtest")
     def _backtest_command(
         tickers: list[str] = typer.Argument(  # noqa: B008
             None, help="Ticker basket (e.g. GME AMC TSLA AAPL NVDA)."
@@ -360,7 +360,7 @@ def build_app() -> typer.Typer:
         )
         raise typer.Exit(code=code)
 
-    @cli.command("ingest")  # type: ignore[untyped-decorator]
+    @cli.command("ingest")
     def _ingest_command(
         subreddit: str = typer.Option("wallstreetbets", help="Subreddit to ingest."),
         start: str = typer.Option(..., help="Inclusive start date (YYYY-MM-DD)."),
@@ -378,7 +378,7 @@ def build_app() -> typer.Typer:
         )
         raise typer.Exit(code=code)
 
-    @cli.command("score")  # type: ignore[untyped-decorator]
+    @cli.command("score")
     def _score_command(
         in_path: str = typer.Option(..., "--in", help="Path to the raw ingested post table."),
         out: str = typer.Option(..., help="Destination path for the daily sentiment panel."),

@@ -18,7 +18,7 @@ here is a **weak/negative** one: a mild in-sample correlation, dominated by
 contemporaneous attention/return feedback, that **largely decays out-of-sample** and
 fails the after-cost, after-multiplicity hurdles.
 
-The danger is not getting the statistics wrong — it is *narrating* a verdict. A
+The danger is not getting the statistics wrong, it is *narrating* a verdict. A
 human (or a future contributor) eyeballing a 0.29 OOS Sharpe might be tempted to
 write "shows promise". The verdict must be impossible to inflate.
 
@@ -28,12 +28,12 @@ The headline `signal_has_edge` is a **pure function** of the honest-statistics
 outputs and nothing else. `evaluation/verdict.derive_verdict(...)` returns `True`
 **iff all four hurdles pass simultaneously**:
 
-1. `oos_net_sharpe > 0` — the after-cost OOS Sharpe is positive;
-2. `deflated_sharpe > dsr_threshold` (default `0.95`) — the multiplicity-adjusted
+1. `oos_net_sharpe > 0`, the after-cost OOS Sharpe is positive;
+2. `deflated_sharpe > dsr_threshold` (default `0.95`), the multiplicity-adjusted
    Sharpe is credible at the **PCA-effective trial count over the full grid**;
-3. `pbo < pbo_threshold` (default `0.5`) — low probability of backtest overfitting
+3. `pbo < pbo_threshold` (default `0.5`), low probability of backtest overfitting
    (CSCV);
-4. `hac_pvalue < alpha` (default `0.05`) — the net mean return is HAC-significant.
+4. `hac_pvalue < alpha` (default `0.05`), the net mean return is HAC-significant.
 
 If any hurdle fails, the verdict is `False`, regardless of the raw Sharpe point
 estimate. The function validates its inputs (DSR, PBO, p-value in `[0, 1]`, all
@@ -41,7 +41,7 @@ finite) and the truth table is unit-tested. The verdict is **derived, never
 narrated**; no prose path can set it.
 
 On the synthetic default this yields `False`: OOS net Sharpe 0.29 (pass) but DSR
-0.26 « 0.95 (fail) and HAC p 0.79 » 0.05 (fail) — two independent hurdles veto the
+0.26 « 0.95 (fail) and HAC p 0.79 » 0.05 (fail), two independent hurdles veto the
 edge claim.
 
 ## Consequences
