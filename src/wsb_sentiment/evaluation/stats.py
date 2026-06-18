@@ -83,7 +83,7 @@ def effective_n_trials(trial_returns: pd.DataFrame, *, var_threshold: float = 0.
     cost) produce highly-correlated return streams, so the raw grid size grossly
     overstates the multiplicity. We PCA the standardized trial-return matrix and
     return the number of principal components needed to explain ``var_threshold``
-    of the variance — a deflation-honest effective trial count that feeds the DSR.
+    of the variance - a deflation-honest effective trial count that feeds the DSR.
 
     Parameters
     ----------

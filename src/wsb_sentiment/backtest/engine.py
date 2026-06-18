@@ -114,7 +114,7 @@ def _row_normalized_positions(
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Apply the PIT mask and L1-normalize each day's positions to gross 1.0.
 
-    ``raw`` positions outside the tradable universe (``mask`` False) are zeroed —
+    ``raw`` positions outside the tradable universe (``mask`` False) are zeroed -
     they are descriptive-only and never traded. The surviving positions are then
     scaled so each day's absolute weights sum to one (a fully-invested book on the
     active names), leaving an all-flat day untouched. Returns the normalized
@@ -139,7 +139,7 @@ def _standardize_threshold_shift(
 
     1. optional trailing causal ``window`` smoothing;
     2. per-ticker z-score using mean/std fit on the TRAIN slice (``<= train_end``)
-       ONLY — no out-of-sample statistic leaks into the standardization;
+       ONLY - no out-of-sample statistic leaks into the standardization;
     3. threshold ``|z| > spec.threshold`` into ``{-1, 0, +1}`` (long/short) or
        ``{0, +1}`` (long/flat);
     4. ``shift(spec.lag)`` so a position earned on day ``t`` was decided strictly
@@ -249,7 +249,7 @@ def run_signal_backtest(
     Aligns the (already ``shift``-ed) ``positions`` to FORWARD returns, restricts
     the traded book to the point-in-time ``universe_mask`` when given, charges a
     per-side ``cost_bps`` transaction cost on daily turnover, and computes the net
-    and gross OOS series alongside the buy-and-hold and attention-only baselines —
+    and gross OOS series alongside the buy-and-hold and attention-only baselines -
     all three reported on the IDENTICAL post-purge/embargo OOS index.
 
     NO-LOOKAHEAD: this function assumes ``positions`` were produced with

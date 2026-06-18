@@ -11,7 +11,7 @@ outputs ``(oos_net_sharpe, deflated_sharpe, pbo, hac_pvalue)``. It cannot read
 - a HAC-significant mean net of costs (``hac_pvalue < alpha``).
 
 By construction on the synthetic default the in-sample edge DECAYS out-of-sample
-and FAILS the DSR + cost hurdles, so this returns ``False`` — the honest null. The
+and FAILS the DSR + cost hurdles, so this returns ``False`` - the honest null. The
 verdict is DERIVED, never narrated; the truth table is unit-tested.
 
 Importing this module has no side effects.
@@ -76,15 +76,15 @@ def derive_verdict(
     Decision rule (truth-table unit-tested): ``signal_has_edge`` is ``True`` iff
     ALL of the following hold simultaneously:
 
-    1. ``oos_net_sharpe > 0`` — the after-cost OOS Sharpe is positive;
-    2. ``deflated_sharpe > dsr_threshold`` — the multiplicity-adjusted Sharpe is
+    1. ``oos_net_sharpe > 0`` - the after-cost OOS Sharpe is positive;
+    2. ``deflated_sharpe > dsr_threshold`` - the multiplicity-adjusted Sharpe is
        credible at the FULL effective-trials grid;
-    3. ``pbo < pbo_threshold`` — a low probability of backtest overfitting;
-    4. ``hac_pvalue < alpha`` — the mean net return is HAC-significant.
+    3. ``pbo < pbo_threshold`` - a low probability of backtest overfitting;
+    4. ``hac_pvalue < alpha`` - the mean net return is HAC-significant.
 
     If ANY hurdle fails the verdict is ``False``. HONESTY REQUIREMENT: this
     function MUST NOT report an edge whenever the DSR fails, the PBO is high, or
-    the HAC test is insignificant, regardless of the raw Sharpe point estimate —
+    the HAC test is insignificant, regardless of the raw Sharpe point estimate -
     the verdict is a deterministic consequence of the evidence.
 
     Parameters

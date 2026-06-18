@@ -21,7 +21,7 @@ from typing import Any, Final
 
 #: STATIC finance-slang lexicon booster, merged into VADER's lexicon at analyzer
 #: construction time. Values are VADER valence scores in roughly ``[-4, 4]``.
-#: This table is a CONSTANT — it is never fit or learned from data.
+#: This table is a CONSTANT - it is never fit or learned from data.
 FINANCE_LEXICON: Final[dict[str, float]] = {
     "moon": 2.5,
     "mooning": 2.5,

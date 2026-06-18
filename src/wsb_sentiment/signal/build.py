@@ -4,12 +4,12 @@ Pipeline (leakage-guarded end to end):
 
 1. Optionally smooth the daily sentiment over a trailing ``window`` (causal).
 2. Standardize with a scaler whose mean/std are FIT ON THE TRAIN SLICE ONLY
-   (:func:`fit_standardizer`) and applied to the full panel — never refit on the
+   (:func:`fit_standardizer`) and applied to the full panel - never refit on the
    OOS slice, so the standardization carries no out-of-sample information.
 3. Threshold the standardized score into a position: long/short
    (``sign(z - threshold)``) or long/flat, by ticker and day.
 4. Apply ``signal.shift(lag)`` (``lag >= 1``) so a position earned on day ``t``
-   was decided strictly before ``t`` — the no-same-bar-lookahead guarantee.
+   was decided strictly before ``t`` - the no-same-bar-lookahead guarantee.
 
 Standardization is scale-invariant (property-tested) and the shift is
 shift-equivariant; both are no-lookahead invariants enforced by the suite.

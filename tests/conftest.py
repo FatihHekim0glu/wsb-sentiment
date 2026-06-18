@@ -4,11 +4,11 @@ Every fixture is deterministic (driven by :func:`wsb_sentiment._rng.make_rng`) a
 returns pandas objects, so tests across the suite share identical synthetic data
 with known structure:
 
-- ``synthetic_sentiment_panel`` — a per-(ticker, day) sentiment panel (mean
+- ``synthetic_sentiment_panel`` - a per-(ticker, day) sentiment panel (mean
   compound, mention count, positive-share) plus a correlated-ish price panel.
-- ``decaying_signal`` — a sentiment/return pair whose in-sample correlation decays
+- ``decaying_signal`` - a sentiment/return pair whose in-sample correlation decays
   out-of-sample (the honest null: an edge that fails DSR after costs).
-- ``pure_noise`` — independent sentiment and returns with no relationship at all.
+- ``pure_noise`` - independent sentiment and returns with no relationship at all.
 
 Importing this module has no side effects beyond fixture registration.
 """
@@ -84,7 +84,7 @@ def synthetic_sentiment_panel() -> SentimentPanel:
 
     Shape ``(504, 5)`` (about two trading years, five tickers). Sentiment is a
     bounded mean-reverting series, mention counts are Poisson, positive-share is a
-    logistic transform of sentiment, and prices follow a mild common-factor GBM —
+    logistic transform of sentiment, and prices follow a mild common-factor GBM -
     all reproducible from a single seed.
     """
     gen = make_rng(_SEED)
@@ -128,7 +128,7 @@ def decaying_signal() -> DecayingSignal:
     Returns are coupled to lagged sentiment with a coefficient that is positive
     early in the sample and decays to zero across the second half, so a leakage-free
     backtest finds a mild in-sample relationship that does not persist out-of-sample
-    — the structure that fails the Deflated Sharpe after costs.
+    - the structure that fails the Deflated Sharpe after costs.
     """
     gen = make_rng(_SEED + 1)
     n_obs, n_assets = 504, 4

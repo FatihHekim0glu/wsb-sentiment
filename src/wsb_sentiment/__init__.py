@@ -1,16 +1,16 @@
-"""WSB sentiment signal — a pure, typed compute library.
+"""WSB sentiment signal - a pure, typed compute library.
 
 Turns r/wallstreetbets chatter into a daily per-ticker sentiment signal and
 honestly tests whether it predicts next-day returns on a point-in-time S&P-500
-universe — with the Deflated Sharpe, PBO/CSCV, and HAC guards. The honest headline:
+universe - with the Deflated Sharpe, PBO/CSCV, and HAC guards. The honest headline:
 a naive VADER WSB daily-sentiment signal shows a mild IN-SAMPLE correlation with
 next-day returns that is dominated by contemporaneous attention/return feedback and
-LARGELY DECAYS out-of-sample, failing the Deflated Sharpe and per-side cost hurdles —
+LARGELY DECAYS out-of-sample, failing the Deflated Sharpe and per-side cost hurdles -
 a credible weak/negative result, not a profitable edge.
 
 IMPORT PURITY: this package has ZERO import-time side effects. Importing
 ``wsb_sentiment`` does NOT import praw, vaderSentiment, textblob, plotly, typer, or
-any network/torch dependency — those are imported lazily inside the functions that
+any network/torch dependency - those are imported lazily inside the functions that
 need them, and ingestion/scoring are OFFLINE batch paths never run at request time.
 
 Public API is curated below; see :data:`__all__`.

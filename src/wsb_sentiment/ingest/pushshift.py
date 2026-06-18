@@ -246,7 +246,7 @@ def _make_json_getter(
 
     The HTTP stack (``urllib``) is imported INSIDE this factory, never at module
     import, so importing this module touches no network and pulls in no
-    third-party HTTP library — the ``data`` extra stays lean (no httpx/requests).
+    third-party HTTP library - the ``data`` extra stays lean (no httpx/requests).
     Tests stub this factory to avoid any real network call.
     """
     import json

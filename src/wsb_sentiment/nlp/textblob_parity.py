@@ -3,7 +3,7 @@
 TextBlob's pattern-based polarity is an independent, LEXICON-based scorer used as
 a cross-check against the primary VADER score in the parity test suite: the two
 should agree in SIGN on clearly-polar text and correlate across a corpus. It is
-NOT the production signal — VADER is — but disagreement flags lexicon bugs.
+NOT the production signal - VADER is - but disagreement flags lexicon bugs.
 
 IMPORT PURITY: ``textblob`` is imported LAZILY inside :func:`score_textblob`.
 Importing this module triggers no textblob import and no corpus download.

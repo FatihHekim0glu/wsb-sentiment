@@ -59,7 +59,7 @@ def _trial_returns(signal: DecayingSignal) -> tuple[pd.DataFrame, pd.Series, pd.
     grid = pd.DataFrame(columns).dropna(how="any")
 
     # The "selected" configuration is the one with the highest IN-SAMPLE Sharpe
-    # (deliberately overfit on the training half) — exactly the selection bias the
+    # (deliberately overfit on the training half) - exactly the selection bias the
     # DSR/PBO are meant to penalise. We then evaluate it OUT-OF-SAMPLE.
     train = grid.loc[grid.index <= signal.train_end]
     test = grid.loc[grid.index > signal.train_end]

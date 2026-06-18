@@ -79,7 +79,7 @@ def test_run_score_processes_jsonl_posts(tmp_path: object) -> None:
 
     Exercises the real (lexicon-based, no-network) extract + VADER score path; the
     daily roll-up is a downstream stub, so the run degrades gracefully to exit
-    code ``1`` rather than crashing — once the roll-up lands the same path yields a
+    code ``1`` rather than crashing - once the roll-up lands the same path yields a
     parquet panel and exit ``0``.
     """
     import json

@@ -3,12 +3,12 @@
 Covers the three functions implemented in
 :mod:`wsb_sentiment.evaluation.stats`:
 
-- :func:`effective_n_trials` — PCA-of-trial-returns deflation of the
+- :func:`effective_n_trials` - PCA-of-trial-returns deflation of the
   multiplicity count (identical columns collapse to one; independent columns
   stay near the raw count; degenerate inputs guarded);
-- :func:`hac_tstat` — Newey-West t-stat / p-value, including the degenerate
+- :func:`hac_tstat` - Newey-West t-stat / p-value, including the degenerate
   zero-variance branch;
-- :func:`compute_honest_stats` — the full assembly of net/buy-hold Sharpe, the
+- :func:`compute_honest_stats` - the full assembly of net/buy-hold Sharpe, the
   effective trial count, the DSR/PSR, the PBO/CSCV, and the HAC test, with the
   ``n_trials`` guard that keeps the effective count in ``[1, n_grid_trials]``.
 

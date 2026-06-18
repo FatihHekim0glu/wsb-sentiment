@@ -3,12 +3,12 @@
 Covers the four leakage/correctness invariants the brief requires of
 :func:`wsb_sentiment.backtest.engine.run_signal_backtest`:
 
-- **PIT restriction** — a ticker absent from the as-of universe is never traded.
-- **Identical OOS index** — the signal, buy-and-hold, and attention-only baselines
+- **PIT restriction** - a ticker absent from the as-of universe is never traded.
+- **Identical OOS index** - the signal, buy-and-hold, and attention-only baselines
   are reported on the exact same post-purge/embargo out-of-sample index.
-- **Purge holds** — the OOS index starts strictly after the train/test boundary
+- **Purge holds** - the OOS index starts strictly after the train/test boundary
   plus the purge+embargo gap.
-- **No-lookahead** — perturbing returns at or before the OOS start cannot change
+- **No-lookahead** - perturbing returns at or before the OOS start cannot change
   any OOS portfolio return (positions are already lagged; nothing is refit OOS).
 
 These tests build positions with a tiny self-contained train-only standardize /
