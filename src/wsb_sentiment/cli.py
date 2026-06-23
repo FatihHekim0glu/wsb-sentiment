@@ -327,7 +327,7 @@ def build_app() -> typer.Typer:
         no_args_is_help=True,
     )
 
-    @cli.command("backtest")
+    @cli.command("backtest")  # type: ignore[untyped-decorator]  # Typer decorator is untyped
     def _backtest_command(
         tickers: list[str] = typer.Argument(  # noqa: B008
             None, help="Ticker basket (e.g. GME AMC TSLA AAPL NVDA)."
@@ -360,7 +360,7 @@ def build_app() -> typer.Typer:
         )
         raise typer.Exit(code=code)
 
-    @cli.command("ingest")
+    @cli.command("ingest")  # type: ignore[untyped-decorator]  # Typer decorator is untyped
     def _ingest_command(
         subreddit: str = typer.Option("wallstreetbets", help="Subreddit to ingest."),
         start: str = typer.Option(..., help="Inclusive start date (YYYY-MM-DD)."),
@@ -378,7 +378,7 @@ def build_app() -> typer.Typer:
         )
         raise typer.Exit(code=code)
 
-    @cli.command("score")
+    @cli.command("score")  # type: ignore[untyped-decorator]  # Typer decorator is untyped
     def _score_command(
         in_path: str = typer.Option(..., "--in", help="Path to the raw ingested post table."),
         out: str = typer.Option(..., help="Destination path for the daily sentiment panel."),
